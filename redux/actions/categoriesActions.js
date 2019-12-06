@@ -16,11 +16,7 @@ export const getStorageSelectedCategories = () => {
   };
 };
 
-<<<<<<< HEAD
 export const setStorageSelectedCategories = selectedCategory => {
-=======
-export const setStorageSelectedCategories = selectedCategories => {
->>>>>>> 7dd080624a8f9e28e05a8be20ebab672a743b115
   return async dispatch => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const storageSelectedCategories = JSON.parse(data) || [];
