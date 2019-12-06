@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux';
 
-const SettingsScreen = () => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
+import * as actionCreators from '../redux/actions/categoriesActions';
+
+const SettingsScreen = props => {
+  useEffect(() => {
+    props.getSelectedCategories();
+  }, []);
 
   const categories = [
     {
       title: 'Selected Categories',
-      data: selectedCategories,
+      data: props.selectedCategories,
       iconType: 'remove'
     },
     {
@@ -18,20 +23,28 @@ const SettingsScreen = () => {
     }
   ];
 
-  function RenderItem({ data }) {
+  const updateCategories = data => {
+    if (data.section.iconType == 'add') {
+      props.setSelectedCategories(data.item);
+    } else {
+      props.removeSelectedCategories(data.item);
+    }
+  };
+
+  const RenderItem = ({ data }) => {
     return (
       <View style={styles.item}>
         <Text style={styles.title}>{data.item}</Text>
-        <View style={{ width: 90 }}>
+        <TouchableOpacity style={{ width: 90 }} onPress={() => updateCategories(data)}>
           <View
             style={[{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }, styles[data.section.iconType]]}
           >
             <Icon size={32} name={`ios-${data.section.iconType}`} color="black" />
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -45,10 +58,8 @@ const SettingsScreen = () => {
   );
 };
 
-SettingsScreen.navigationOptions = () => {
-  return {
-    title: 'Settings'
-  };
+SettingsScreen.navigationOptions = {
+  title: 'Settings'
 };
 
 const styles = StyleSheet.create({
@@ -74,11 +85,26 @@ const styles = StyleSheet.create({
     fontSize: 22
   },
   add: {
-    backgroundColor: 'red'
+    backgroundColor: 'green'
   },
   remove: {
-    backgroundColor: 'green'
+    backgroundColor: 'red'
   }
 });
 
-export default SettingsScreen;
+const mapStateToProps = state => {
+  return {
+    selectedCategories: state.categoriesReducer.selectedCategories
+  };
+};
+
+const mapDispatchtoProps = dispatch => {
+  return {
+    getSelectedCategories: () => dispatch(actionCreators.getStorageSelectedCategories()),
+    setSelectedCategories: selectedCategory => dispatch(actionCreators.setStorageSelectedCategories(selectedCategory)),
+    removeSelectedCategories: selectedCategory =>
+      dispatch(actionCreators.removeStorageSelectedCategories(selectedCategory))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchtoProps)(SettingsScreen);

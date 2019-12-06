@@ -8,7 +8,7 @@ export const setSelectedCategories = selectedCategories => ({
   selectedCategories
 });
 
-getStorageSelectedCategories = () => {
+export const getStorageSelectedCategories = () => {
   return async dispatch => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const storageSelectedCategories = JSON.parse(data) || [];
@@ -16,12 +16,26 @@ getStorageSelectedCategories = () => {
   };
 };
 
-setStorageSelectedCategories = selectedCategories => {
+export const setStorageSelectedCategories = selectedCategory => {
   return async dispatch => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const storageSelectedCategories = JSON.parse(data) || [];
-    storageSelectedCategories.push(selectedCategories);
+    const alreadyExist = storageSelectedCategories.find(category => category === selectedCategory);
+    if (alreadyExist) {
+      return;
+    }
+    storageSelectedCategories.push(selectedCategory);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storageSelectedCategories));
-    dispatch(setSelectedCategories(selectedCategories));
+    dispatch(setSelectedCategories(storageSelectedCategories));
+  };
+};
+
+export const removeStorageSelectedCategories = toRemoveCategory => {
+  return async dispatch => {
+    const data = await AsyncStorage.getItem(STORAGE_KEY);
+    const storageSelectedCategories = JSON.parse(data) || [];
+    const newSelectedCategories = storageSelectedCategories.filter(category => category !== toRemoveCategory);
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newSelectedCategories));
+    dispatch(setSelectedCategories(newSelectedCategories));
   };
 };
