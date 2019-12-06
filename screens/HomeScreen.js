@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -8,54 +8,52 @@ import NewsService from '../services/NewsService';
 import NewsItem from '../components/NewsItem';
 import Loading from '../components/Loading';
 
-class HomeScreen extends Component {
-  static navigationOptions = () => {
-    return {
-      title: 'Home'
-    };
-  };
+const HomeScreen = props => {
+  const [data, setData] = useState(null);
+  const api = new NewsService();
 
-  api = new NewsService();
-
-  state = {
-    data: null,
-  };
-
-  async componentDidMount() {
-    this.props.getSelectedCategories();
-    if (this.props.categories.length == 0) {
-      this.props.navigation.navigate('Settings');
+  useEffect(() => {
+    props.getSelectedCategories();
+    if (props.categories && props.categories.length == 0) {
+      props.navigation.navigate('Settings');
     }
-    this.props.getReadedArticles();
-    let data = await this.api.getNewsByCategories(this.props.categories);
-    data = data.filter(({ title }) => !this.props.readedArticles.includes(title));
-    this.setState({ data });
-  }
+    props.getReadedArticles();
+    props.categories && api.getNewsByCategories(props.categories).then(realData => {
+      if (data) {
+        realData = data.filter(({ title }) => !props.readedArticles.includes(title));
+        setData(realData);
+      }
+    });
+  }, []);
 
-  save = title => {
-    this.props.setReadedArticles(title);
-    let data = this.state.data.filter((article) => title !== article.title)
-    this.setState({ data });
+  const save = title => {
+    props.setReadedArticles(title);
+    let filteredData = data.filter(article => title !== article.title);
+    setData(filteredData);
   };
 
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        {this.state.data ? (
-          <FlatList
-            data={this.state.data}
-            keyExtractor={item => item.title}
-            renderItem={({ item }) => <NewsItem data={item} onSwipeRight={this.save} />}
-          />
-        ) : (
-          <Loading displayColor="red" />
-        )}
-      </View>
-    );
-  }
-}
+  return (
+    <View style={{ flex: 1 }}>
+      {data ? (
+        <FlatList
+          data={data}
+          keyExtractor={item => item.title}
+          renderItem={({ item }) => <NewsItem data={item} onSwipeRight={save} />}
+        />
+      ) : (
+        <Loading displayColor="red" />
+      )}
+    </View>
+  );
+};
 
-const mapStateToProps = ({articlesReducer, categoriesReducer}) => {
+HomeScreen.navigationOptions = () => {
+  return {
+    title: 'Home'
+  };
+};
+
+const mapStateToProps = ({ articlesReducer, categoriesReducer }) => {
   return {
     readedArticles: articlesReducer.readedArticles,
     categories: categoriesReducer.selectedCategories
