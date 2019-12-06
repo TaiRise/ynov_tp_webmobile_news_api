@@ -51,7 +51,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
     Home: {
       screen: homeNavigator,
       navigationOptions: {
-        tabBarLabel: 'Accueil',
+        tabBarLabel: 'Home',
         tabBarIcon: ({tintColor}) => (
           <Icon color={tintColor} size={25} name={'ios-home'} />
         ),
@@ -61,7 +61,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
     Settings: {
       screen: settingsNavigator,
       navigationOptions: {
-        tabBarLabel: 'Paramètres',
+        tabBarLabel: 'Settings',
         tabBarIcon: ({tintColor}) => (
           <Icon color={tintColor} size={25} name={'ios-settings'} />
         ),

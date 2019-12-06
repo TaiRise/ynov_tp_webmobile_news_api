@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, Text, Image, TouchableOpacity, Linking, StyleSheet } from "react-native";
-import moment from 'moment/min/moment-with-locales';
+import moment from 'moment';
 
 class DetailScreen extends Component {
   static navigationOptions = ({navigation}) => {
@@ -20,11 +20,11 @@ class DetailScreen extends Component {
       <View>
         <Image style={styles.image} source={{ uri: urlToImage }} />
         <View style={styles.container}>
-          <Text style={styles.meta}>{category} | {author} | {moment(publishedAt).locale('fr').format('ll')}</Text>
+          <Text style={styles.meta}>{category} | {author} | {moment(publishedAt).format('ll')}</Text>
           <Text style={styles.title}>{title}</Text>
           <Text>{content}</Text>
           <TouchableOpacity style={styles.button} onPress={() => this.openInBrowser(url)}>
-            <Text style={styles.buttonText}>Lire la suite</Text>
+            <Text style={styles.buttonText}>See more</Text>
           </TouchableOpacity>
         </View>
       </View>

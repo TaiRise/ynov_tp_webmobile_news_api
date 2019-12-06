@@ -6,7 +6,7 @@ const url = `https://newsapi.org/v2/top-headlines?apiKey=${key}`;
 
 class NewsService {
 
-  constructor(country = 'fr') {
+  constructor(country = 'us') {
     this.country = country;
   }
 

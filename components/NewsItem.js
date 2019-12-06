@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Button, StyleSheet, Text, Image, TouchableHighlight } from 'react-native';
 import PropTypes from 'prop-types';
 import { SwipeRow } from 'react-native-swipe-list-view';
-import moment from 'moment/min/moment-with-locales';
+import moment from 'moment';
 import { withNavigation } from 'react-navigation';
 
 class NewsItem extends Component {
@@ -34,7 +34,7 @@ class NewsItem extends Component {
               </View>
               <View>
                 <Text style={styles.meta}>{source.name}</Text>
-                <Text style={styles.meta}>{moment(publishedAt).locale('fr').format('lll')}</Text>
+                <Text style={styles.meta}>{moment(publishedAt).format('lll')}</Text>
               </View>
             </View>
           </View>
