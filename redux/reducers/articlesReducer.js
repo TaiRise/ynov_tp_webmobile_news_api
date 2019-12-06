@@ -9,7 +9,7 @@ const ArticlesReducer = (state = initialState, action) => {
     case actionTypes.SET_READED_ARTICLES:
       return {
         ...state,
-        readedArticles: action.readedArticles
+        readedArticles: action.payload
       };
     default:
       return state;

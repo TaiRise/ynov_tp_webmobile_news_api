@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
-import * as actionCreators from '../redux/actions/articlesActions';
+import { getStorageReadedArticles, setStorageReadedArticles } from '../redux/actions/articlesActions';
+import { getStorageSelectedCategories } from '../redux/actions/categoriesActions';
 import NewsService from '../services/NewsService';
 import NewsItem from '../components/NewsItem';
 import Loading from '../components/Loading';
@@ -18,22 +19,23 @@ class HomeScreen extends Component {
 
   state = {
     data: null,
-    categories: ['business', 'entertainment'],
-    isRead: [
-      'Trump faces complicated calculus in deciding whether to slap new tariffs on Chinese goods - CNBC',
-      "Uber's sex assault scandal is set to wipe $1 billion from the stock (UBER) - Business Insider",
-      '‘Fiscal dysfunction’ may lead to 10% pullbacks next year—and also some good opportunities, fund manager says - MarketWatch'
-    ]
   };
 
   async componentDidMount() {
-    let data = await this.api.getNewsByCategories(this.state.categories);
-    data = data.filter(({ title }) => !this.state.isRead.includes(title));
+    this.props.getSelectedCategories();
+    if (this.props.categories.length == 0) {
+      this.props.navigation.navigate('Settings');
+    }
+    this.props.getReadedArticles();
+    let data = await this.api.getNewsByCategories(this.props.categories);
+    data = data.filter(({ title }) => !this.props.readedArticles.includes(title));
     this.setState({ data });
   }
 
   save = title => {
-    console.log(title);
+    this.props.setReadedArticles(title);
+    let data = this.state.data.filter((article) => title !== article.title)
+    this.setState({ data });
   };
 
   render() {
@@ -53,16 +55,18 @@ class HomeScreen extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ({articlesReducer, categoriesReducer}) => {
   return {
-    readedArticles: state.readedArticles
+    readedArticles: articlesReducer.readedArticles,
+    categories: categoriesReducer.selectedCategories
   };
 };
 
 const mapDispatchtoProps = dispatch => {
   return {
-    getReadedArticle: () => dispatch(actionCreators.getStorageReadedArticles()),
-    setReadedArticle: selectedArticle => dispatch(actionCreators.setStorageReadedArticles(selectedArticle))
+    getReadedArticles: () => dispatch(getStorageReadedArticles()),
+    getSelectedCategories: () => dispatch(getStorageSelectedCategories()),
+    setReadedArticles: selectedArticle => dispatch(setStorageReadedArticles(selectedArticle))
   };
 };
 

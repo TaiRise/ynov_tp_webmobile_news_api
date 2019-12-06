@@ -8,7 +8,7 @@ export const setSelectedCategories = selectedCategories => ({
   selectedCategories
 });
 
-getStorageSelectedCategories = () => {
+export const getStorageSelectedCategories = () => {
   return async dispatch => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const storageSelectedCategories = JSON.parse(data) || [];
@@ -16,7 +16,7 @@ getStorageSelectedCategories = () => {
   };
 };
 
-setStorageSelectedCategories = selectedCategories => {
+export const setStorageSelectedCategories = selectedCategories => {
   return async dispatch => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const storageSelectedCategories = JSON.parse(data) || [];
