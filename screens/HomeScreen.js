@@ -9,11 +9,15 @@ class HomeScreen extends Component {
     }
   }
 
+  state = { 
+    data: null,
+    categories: []
+  };
   api = new NewsService();
 
   async componentDidMount() {
-    let res = await this.api.getNewsByCategories(['business', 'entertainment']);
-    console.log(res);
+    let data = await this.api.getNewsByCategories(this.categories);
+    this.setData({ data })
   }
 
   
