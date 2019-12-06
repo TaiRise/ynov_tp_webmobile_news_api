@@ -10,11 +10,16 @@ class NewsService {
     this.country = country;
   }
 
+ capitalize = (s) => {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }
+
   async getNewsByCategories(categories = []) {
     let news = [];
     let promises = categories.map(category => axios.get(`${url}&country=${this.country}&category=${category}`));
     let res = await Promise.all(promises);
-    res.map(({data}, index) => data.articles.map(article => news.push({ category: categories[index], ...article })));
+    res.map(({data}, index) => data.articles.map(article => news.push({ category: this.capitalize(categories[index]), ...article })));
     news.sort(({publishedAt: a}, {publishedAt: b}) => {
       let ma = moment(a).format('X');
       let mb = moment(b).format('X');
