@@ -10,16 +10,22 @@ class HomeScreen extends Component {
       title: 'Home',
     }
   }
-  
+
   api = new NewsService();
 
   state = { 
     data: null,
-    categories: ['business', 'entertainment']
+    categories: ['business', 'entertainment'],
+    isRead: [
+      "Trump faces complicated calculus in deciding whether to slap new tariffs on Chinese goods - CNBC",
+      "Uber's sex assault scandal is set to wipe $1 billion from the stock (UBER) - Business Insider",
+      "‘Fiscal dysfunction’ may lead to 10% pullbacks next year—and also some good opportunities, fund manager says - MarketWatch"
+    ]
   };
 
   async componentDidMount() {
     let data = await this.api.getNewsByCategories(this.state.categories);
+    data = data.filter(({title}) => !this.state.isRead.includes(title))
     this.setState({ data });
   }
 
