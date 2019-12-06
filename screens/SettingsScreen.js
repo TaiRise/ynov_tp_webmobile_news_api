@@ -3,7 +3,7 @@ import { View, Text, SectionList, StyleSheet, TouchableOpacity } from 'react-nat
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const SettingsScreen = () => {
-  const [selectedCategories, setSelectedCategories] = useState();
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const categories = [
     {
@@ -19,7 +19,6 @@ const SettingsScreen = () => {
   ];
 
   function RenderItem({ data }) {
-    console.log(data);
     return (
       <View style={styles.item}>
         <Text style={styles.title}>{data.item}</Text>
