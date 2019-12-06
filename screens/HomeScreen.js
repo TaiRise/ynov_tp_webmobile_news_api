@@ -14,15 +14,16 @@ const HomeScreen = props => {
 
   useEffect(() => {
     props.getSelectedCategories();
-    if (props.categories && props.categories.length == 0) {
-      props.navigation.navigate('Settings');
-    }
     props.getReadedArticles();
-    props.categories && api.getNewsByCategories(props.categories).then(realData => {
-      if (data) {
-        realData = data.filter(({ title }) => !props.readedArticles.includes(title));
-        setData(realData);
-      }
+    // if (props.categories && props.categories.length == 0) {
+    //   props.navigation.navigate('Settings');
+    // }
+
+    // props.categories en param de l'api call.
+    // Mais on arrive pas attendre Redux avant de faire le call api
+    api.getNewsByCategories(['business, entertainment']).then(realData => {
+      const data = realData.filter(({ title }) => !props.readedArticles.includes(title));
+      setData(data);
     });
   }, []);
 
