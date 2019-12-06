@@ -1,53 +1,69 @@
-import React, { Component } from "react";
-import { View, FlatList } from "react-native";
-import NewsService from "../services/NewsService";
-import NewsItem from "../components/NewsItem";
-import Loading from "../components/Loading";
+import React, { Component } from 'react';
+import { View, FlatList } from 'react-native';
+import { connect } from 'react-redux';
+
+import * as actionCreators from '../redux/actions/articlesActions';
+import NewsService from '../services/NewsService';
+import NewsItem from '../components/NewsItem';
+import Loading from '../components/Loading';
 
 class HomeScreen extends Component {
   static navigationOptions = () => {
     return {
-      title: 'Home',
-    }
-  }
+      title: 'Home'
+    };
+  };
 
   api = new NewsService();
 
-  state = { 
+  state = {
     data: null,
     categories: ['business', 'entertainment'],
     isRead: [
-      "Trump faces complicated calculus in deciding whether to slap new tariffs on Chinese goods - CNBC",
+      'Trump faces complicated calculus in deciding whether to slap new tariffs on Chinese goods - CNBC',
       "Uber's sex assault scandal is set to wipe $1 billion from the stock (UBER) - Business Insider",
-      "‘Fiscal dysfunction’ may lead to 10% pullbacks next year—and also some good opportunities, fund manager says - MarketWatch"
+      '‘Fiscal dysfunction’ may lead to 10% pullbacks next year—and also some good opportunities, fund manager says - MarketWatch'
     ]
   };
 
   async componentDidMount() {
     let data = await this.api.getNewsByCategories(this.state.categories);
-    data = data.filter(({title}) => !this.state.isRead.includes(title))
+    data = data.filter(({ title }) => !this.state.isRead.includes(title));
     this.setState({ data });
   }
 
   save = title => {
     console.log(title);
-  }
-  
+  };
+
   render() {
     return (
       <View style={{ flex: 1 }}>
         {this.state.data ? (
-          <FlatList data={this.state.data}
+          <FlatList
+            data={this.state.data}
             keyExtractor={item => item.title}
-            renderItem={({item}) => (
-              <NewsItem 
-                data={item}
-                onSwipeRight={this.save} />
-            )} />
-        ) : (<Loading displayColor="red"/>)}
+            renderItem={({ item }) => <NewsItem data={item} onSwipeRight={this.save} />}
+          />
+        ) : (
+          <Loading displayColor="red" />
+        )}
       </View>
     );
   }
 }
 
-export default HomeScreen;
+const mapStateToProps = state => {
+  return {
+    readedArticles: state.readedArticles
+  };
+};
+
+const mapDispatchtoProps = dispatch => {
+  return {
+    getReadedArticle: () => dispatch(actionCreators.getStorageReadedArticles()),
+    setReadedArticle: selectedArticle => dispatch(actionCreators.setStorageReadedArticles(selectedArticle))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchtoProps)(HomeScreen);
