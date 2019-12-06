@@ -5,10 +5,10 @@ const STORAGE_KEY = 'READED_ARTICLES';
 
 export const setReadedArticles = readedArticles => ({
   type: SET_READED_ARTICLES,
-  readedArticles
+  payload: readedArticles
 });
 
-getStorageReadedArticles = () => {
+export const getStorageReadedArticles = () => {
   return async dispatch => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const storageReadedArticles = JSON.parse(data) || [];
@@ -16,12 +16,12 @@ getStorageReadedArticles = () => {
   };
 };
 
-setStorageReadedArticles = readedArticle => {
+export const setStorageReadedArticles = readedArticle => {
   return async dispatch => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const storageReadedArticles = JSON.parse(data) || [];
     storageReadedArticles.push(readedArticle);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storageReadedArticles));
-    dispatch(setReadedArticles(readedArticles));
+    dispatch(setReadedArticles(storageReadedArticles));
   };
 };
